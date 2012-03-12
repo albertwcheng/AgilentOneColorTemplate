@@ -1,0 +1,30 @@
+
+This is for normalizing array data for one-color agilent array using Cy3 dye using the Limma Package (http://bioinf.wehi.edu.au/limma/)
+
+copy or move all the *.txt files from Data and Scan Analyzed to raw folder
+modify targets.txt such that it maps each txt with sample
+go to scripts folder open the R script in R and run:
+
+source('normalize_summarize_Agilent_arrays_OneColor_withTargetFiles.R')
+
+Note if you edit the targets.txt file with Excel, it may screw up the return symbols and make the R script crash while reading target file. To check if excel screwed up anything. go to terminal, do:
+
+"less targets.txt" and see if you see those ^M characters appearing. Also check with "wc -l" to see the number of lines. If there is 0 lines, then Excel messed up the return symbols. To correct that:
+
+mv targets.txt targetsExcel.txt
+cat targetsExcel.txt | tr "\015" "\n" > targets.txt
+echo "" >> targets.txt
+wc -l targets.txt
+
+now wc -l targets should give you the correct number of lines (i.e., number samples + 1 for the header)
+
+What the script does is:
+
+it reads in target file (which map raw data to sample name) and array files   to get signal matrix, then normalize across the arrays by quantile normalization.
+
+After the script there will be a tlimmaOutput folder, within it a withControl folder, within it some pdf files and some txt files.
+
+The pdf files are diagnostic plots of the log2 intensity distribution before (plotDensities_raw.pdf) and after normalization(plotDensities_after_between_norm.bgc0.pdf)
+
+The corresponding txt files (G.raw.txt and G.bgc0.norm.txt) contains the raw and normalized expression matrix respectively. And values are in log2. 
+
